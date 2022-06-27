@@ -17,17 +17,18 @@ from utils import arg_utils
 
 def main():
     # The welcome message.
-    welcome = '='*82 + '\nA Framework on Pruning Robustness Based on open-lth\n' + '-'*82
+    welcome = '='*82 + '\nA Framework on Sparse Double Descent Based on open-lth\n' + '-'*82
 
     # Choose an initial command.
     helptext = welcome + "\nChoose a command to run:"
+    startup_path = sys.argv[0].split('/')[-1]
     for name, runner in runner_registry.registered_runners.items():
         if name != 'branch':
-            helptext += "\n    * {} {} [...] => {}".format(sys.argv[0], name, runner.description())
+            helptext += "\n    * {} {} [...] => {}".format(startup_path, name, runner.description())
         else:
             for _name, _runner in runner_registry.registered_runners.items():
                 if _name == name: continue
-                helptext += "\n    * {} {}_{} [...] => {}".format(sys.argv[0], _name, name, runner.description())
+                helptext += "\n    * {} {}_{} [...] => {}".format(startup_path, _name, name, runner.description())
     helptext += '\n' + '='*82
 
     runner_name = arg_utils.maybe_get_arg('subcommand', positional=True)

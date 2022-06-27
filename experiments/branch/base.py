@@ -170,8 +170,8 @@ class Branch(Runner):
             else:
                 raise ValueError('Invalid branch type: {}'.format(parameter.annotation))
         
-        main_experiment = sys.argv[1].split('_')[0]
-        if len(sys.argv[1].split('_'))==2:
+        main_experiment = sys.argv[1].split('_')[0] if len(sys.argv) > 1 else None
+        if main_experiment is not None and len(sys.argv[1].split('_'))==2:
             if main_experiment not in main_descs.keys(): 
                 raise ValueError('{} has not been registered as a main experiment'.format(main_experiment))
 

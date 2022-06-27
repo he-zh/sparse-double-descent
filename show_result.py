@@ -1,31 +1,8 @@
 import argparse
 from sys import platform
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 from foundations import local
-
-def plot(test_iter, test_loss, test_acc, filename):
-    fig, axes = plt.subplots(2,1)
-    
-    axes[0].plot(test_iter, test_loss)
-    axes[1].plot(test_iter, test_acc)
-
-    # axes[1].set_ylim((0.9,1))
-    plt.savefig(filename+'.png')
-    plt.close()
-
-    return None
-
-def plot_item(item, path, type):
-    fig, ax = plt.subplots()
-    num = item.size
-    x = np.arange(num)
-    ax.plot(x, item)
-    ax.set_title(type)
-    plt.savefig(path+type+'.png')
-    plt.close()
-    return
 
 def read_logger(filename):
 
@@ -80,8 +57,6 @@ def level_continuous_reader(filepath, file='main'):
             
             if os.path.exists(filename):
                 train_iter, train_loss, train_acc, test_iter, test_loss, test_acc = read_logger(filename)
-                # plot(test_iter, test_loss, test_acc, filename+'test')
-                # plot(train_iter, train_loss, train_acc, filename+'train')
                 if l == 0:
                     loss = test_loss
                     acc = test_acc
@@ -130,8 +105,7 @@ def level_continuous_reader(filepath, file='main'):
         for i in range(train_acc_last.size):
             print('%.2f'%(train_acc_last[i]*100), end=' ')
         print('\n')
-    fig_name = filepath+'/main_continuous-loss-acc' if 'main' in file else filepath+'/branch_continuous-loss-acc' 
-    # plot(iter, loss, acc, fig_name)
+
 
 def single_level_reader(filepath, file='main'):
     replicate = [i for i in os.listdir(filepath) if '.' not in i]
@@ -164,20 +138,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--name', type = str,
                         help='The name of file.')
-
-    parser.add_argument('--oneshot', action='store_true', help='Output the oneshot branch results') 
-    # parser.add_argument('--train', action='store_true', help='Output the training results') 
-    # parser.add_argument('--prune', action='store_true', help='Output the pruning results') 
-
     args = parser.parse_args()
     platform = local.Platform()
     file_path = os.path.join(platform.root,args.name)
     if 'train' in args.name:
         file = 'main'
         single_level_reader(file_path, )
-    elif args.oneshot:
-        file = 'branch_oneshot_prune_7b99794732481fff503d5290ee43fb4b'
-        level_continuous_reader(file_path, file)
     else:
         file = 'main'
         level_continuous_reader(file_path, file)

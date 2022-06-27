@@ -22,7 +22,6 @@ class Branch(base.Branch):
         retrain_d: hparams.DatasetHparams,
         retrain_t: hparams.TrainingHparams,
         start_at_step_zero: bool = False,
-        show_seperate_acc_loss: bool = False,
     ):
         
         evaluate_every_epoch: bool = True
@@ -50,15 +49,6 @@ class Branch(base.Branch):
         end_step = Step.from_str(retrain_t.training_steps, iterations_per_epoch)
         if (models.registry.exists(self.branch_root, end_step) and
             os.path.exists(paths.logger(self.branch_root))): return
-        
-        # Get the dataloader: train, unpermuted, permuted, restored, test
-        if show_seperate_acc_loss == True:
-            train_permuted_loader = datasets.registry.get(retrain_d, train=True, subsample_labels_type='permuted')
-            train_unpermuted_loader = datasets.registry.get(retrain_d, train=True, subsample_labels_type='unpermuted')
-            train_restored_loader = datasets.registry.get(retrain_d, train=True, subsample_labels_type='restored')
-            train_permuted_eval_callback = standard_callbacks.create_eval_callback('train_permuted', train_permuted_loader, verbose=self.verbose)
-            train_unpermuted_eval_callback = standard_callbacks.create_eval_callback('train_unpermuted', train_unpermuted_loader, verbose=self.verbose)
-            train_restored_eval_callback = standard_callbacks.create_eval_callback('train_restored', train_restored_loader, verbose=self.verbose)
 
         train_loader = datasets.registry.get(retrain_d, train=True)
         test_loader = datasets.registry.get(retrain_d, train=False)
@@ -74,34 +64,19 @@ class Branch(base.Branch):
                   ]
 
         # Test every epoch if requested.
-        if evaluate_every_epoch:
-            if not show_seperate_acc_loss: result = [standard_callbacks.run_every_epoch(test_eval_callback)] + result
-        elif self.verbose: result.append(standard_callbacks.run_every_epoch(standard_callbacks.create_timekeeper_callback()))
+        if self.verbose: result.append(standard_callbacks.run_every_epoch(standard_callbacks.create_timekeeper_callback()))
 
         # Ensure that testing occurs at least at the beginning and end of training.
         if start_step.it != 0 or not evaluate_every_epoch: result = [standard_callbacks.run_at_step(start_step, test_eval_callback)] + result
         if end_step.it != 0 or not evaluate_every_epoch: result = [standard_callbacks.run_at_step(end_step, test_eval_callback)] + result
 
         # Do the same for the train set if requested.
-        if show_seperate_acc_loss == True:
-            if evaluate_every_epoch: result = [ standard_callbacks.run_every_epoch(train_permuted_eval_callback),
-                                                standard_callbacks.run_every_epoch(train_unpermuted_eval_callback),
-                                                standard_callbacks.run_every_epoch(train_restored_eval_callback)] + result
+        if evaluate_every_epoch: result = [standard_callbacks.run_every_epoch(train_eval_callback)] + result
 
-            if start_step.it != 0 or not evaluate_every_epoch: result = [standard_callbacks.run_at_step(start_step, train_permuted_eval_callback),
-                                                                        standard_callbacks.run_at_step(start_step, train_unpermuted_eval_callback),
-                                                                        standard_callbacks.run_at_step(start_step, train_restored_eval_callback)] + result
+        if start_step.it != 0 or not evaluate_every_epoch: result = [standard_callbacks.run_at_step(start_step, train_eval_callback)] + result
+        
+        if end_step.it != 0 or not evaluate_every_epoch: result = [standard_callbacks.run_at_step(end_step, train_eval_callback)] + result
             
-            if end_step.it != 0 or not evaluate_every_epoch: result = [standard_callbacks.run_at_step(end_step, train_permuted_eval_callback),
-                                                                        standard_callbacks.run_at_step(end_step, train_unpermuted_eval_callback),
-                                                                        standard_callbacks.run_at_step(end_step, train_restored_eval_callback)] + result
-        else:
-            if evaluate_every_epoch: result = [standard_callbacks.run_every_epoch(train_eval_callback)] + result
-
-            if start_step.it != 0 or not evaluate_every_epoch: result = [standard_callbacks.run_at_step(start_step, train_eval_callback)] + result
-            
-            if end_step.it != 0 or not evaluate_every_epoch: result = [standard_callbacks.run_at_step(end_step, train_eval_callback)] + result
-              
         train.train(retrain_t, m, train_loader, self.branch_root, result, start_step=start_step)
 
 
