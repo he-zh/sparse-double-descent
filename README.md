@@ -48,9 +48,9 @@ In practice, you can begin with a set of defaults and optionally modify individu
 ```
 main.py [subcommand] [...] --help
 ```
-### Exemplary Runs
-
-#### 1 Various Retraining Schedules
+## Exemplary Runs
+Here we present several examples to run the sparse double descent related experiments.
+### 1 Various Retraining Schedules
 1.1 Lottery Ticket Rewinding
 ```
 python main.py lottery --training_steps=160ep --lr=0.1 --milestone_steps=80ep,120ep --gamma=0.1 --rewinding_steps=1000it --default_hparams=cifar_pytorch_resnet_18 --levels=30 --random_labels_fraction=0.2 --dataset_name=cifar10 --gpu=0 --fix_all_random_seeds=1  
@@ -67,15 +67,15 @@ python main.py rewindLR  --training_steps=160ep --lr=0.1 --milestone_steps=80ep,
 ```
 python main.py scratch  --training_steps=160ep --lr=0.1 --milestone_steps=80ep,120ep --gamma=0.1  --default_hparams=cifar_pytorch_resnet_18 --levels=30 --random_labels_fraction=0.2 --dataset_name=cifar10 --gpu=0 --fix_all_random_seeds=1 
 ```
-#### 2 Various Pruning Criterions (magnitude/gradient/random)
+### 2 Various Pruning Criterions (magnitude/gradient/random)
 ```
  python main.py lottery --pruning_strategy=random --training_steps=160ep --lr=0.1 --milestone_steps=80ep,120ep --gamma=0.1 --rewinding_steps=1000it --default_hparams=cifar_pytorch_resnet_18 --levels=30 --random_labels_fraction=0.2 --dataset_name=cifar10 --gpu=0 --fix_all_random_seeds=1 
 ```
-#### 3 Different Label Noise Types (asymmetric/pairflip)
+### 3 Different Label Noise Types (asymmetric/pairflip)
 ```
 python main.py lottery --noisy_labels_type=asymmetric --noisy_labels_fraction=0.2 --training_steps=160ep --lr=0.1 --milestone_steps=80ep,120ep --gamma=0.1 --rewinding_steps=1000it --default_hparams=cifar_pytorch_resnet_18 --levels=30 --dataset_name=cifar10 --gpu=0 --fix_all_random_seeds=1
 ```
-#### 4 Re-dense Training
+### 4 Re-dense Training
 This experiment requires running a standard pruning task first.
 ```
 python main.py lottery --training_steps=160ep --lr=0.1 --milestone_steps=80ep,120ep --gamma=0.1 --rewinding_steps=1000it --default_hparams=cifar_pytorch_resnet_18 --levels=30 --random_labels_fraction=0.4 --dataset_name=cifar100 --fix_all_random_seeds=1  --gpu=0 
@@ -84,7 +84,7 @@ Then run the following command for re-dense retraining.
 ```
 python main.py lottery_branch retrain --training_steps=160ep --lr=0.1 --milestone_steps=80ep,120ep --gamma=0.1 --rewinding_steps=1000it --default_hparams=cifar_pytorch_resnet_18 --levels=0,3,6,9,12,15,19,22,26  --random_labels_fraction=0.4 --dataset_name=cifar100  --retrain_d_dataset_name=cifar100 --retrain_d_batch_size=128 --retrain_t_optimizer_name=sgd --retrain_t_lr=0.1  --retrain_t_milestone_steps=80ep,120ep  --retrain_t_gamma=0.1  --retrain_t_training_steps=320ep --retrain_d_random_labels_fraction=0.4  --retrain_t_weight_decay=1e-4  --retrain_t_momentum=0.9 --retrain_t_regain_pruned_weights_steps=160ep  --fix_all_random_seeds=1  --gpu=0 
 ```
-#### 5 Random Reinitialization Ablation
+### 5 Random Reinitialization Ablation
 This experiment requires running a standard lottery ticket task first.
 ```
  python main.py lottery --training_steps=160ep --lr=0.1 --milestone_steps=80ep,120ep --gamma=0.1 --rewinding_steps=1000it --default_hparams=cifar_pytorch_resnet_18 --levels=30 --random_labels_fraction=0.2 --dataset_name=cifar10 --gpu=0 --fix_all_random_seeds=1
@@ -94,7 +94,7 @@ Then run the following command for random reinitialization.
 python main.py lottery_branch randomly_reinitialize --training_steps=160ep --lr=0.1 --milestone_steps=80ep,120ep --gamma=0.1 --rewinding_steps=1000it --default_hparams=cifar_pytorch_resnet_18 --levels=1-27 --random_labels_fraction=0.2 --dataset_name=cifar10 --gpu=0 --fix_all_random_seeds=1
 ```
 
-#### 6 Tiny ImageNet Experiment
+### 6 Tiny ImageNet Experiment
 In order to save time and computational resources, we use one-shot pruning on Tiny ImageNet dataset.
 ```
 python main.py lottery_branch oneshot_prune --default_hparams=tinyimagenet_resnet_101 --dataset_name=tiny_imagenet --batch_size=512 --lr=0.2 --gpu=0,1,2,3 --level=0-16 --rewinding_steps=1000it --random_labels_fraction=0.2 --milestone_steps=100ep,150ep --training_steps=200ep --fix_all_random_seeds=1
