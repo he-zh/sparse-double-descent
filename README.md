@@ -6,7 +6,7 @@ This framework implements key experiments on the sparse double descent phenomeno
 
 ![](./figs/sparsedd.png)
 ## Overview
-This framework is built upon the [OpenLTH](https://github.com/facebookresearch/open_lth) project. We adopt most of the original implementations, and made additional modications. Followings are the key experiments we include here.
+This framework is built upon the [OpenLTH](https://github.com/facebookresearch/open_lth) project. We adopted most of the original implementations, and made additional modications. Followings are the key experiments we include here.
 - **Pruning under various settings:**
     - Pruning with various criterions, e.g., magnitude-based pruning, gradient-based pruning and random pruning
     - Pruning with different retraining schedules, e.g., finetuning, lottery ticket rewinding, learning rate rewinding and scratch retraining.
@@ -26,7 +26,7 @@ This framework is built upon the [OpenLTH](https://github.com/facebookresearch/o
 - Install the requirements.
 - Modify foundations/local.py so that it contains the paths where you want datasets and results to be stored. To train with Tiny ImageNet, you will need to specify the path where Tiny ImageNet is stored.
 ### Useage
-The ```mian.py``` takes the following subcommands to run.
+The ```main.py``` takes the following subcommands to run.
 ```
 ==================================================================================
 A Framework on Sparse Double Descent Based on open_lth
@@ -100,7 +100,7 @@ In order to save time and computational resources, we use one-shot pruning on Ti
 python main.py lottery_branch oneshot_prune --default_hparams=tinyimagenet_resnet_101 --dataset_name=tiny_imagenet --batch_size=512 --lr=0.2 --gpu=0,1,2,3 --level=0-16 --rewinding_steps=1000it --random_labels_fraction=0.2 --milestone_steps=100ep,150ep --training_steps=200ep --fix_all_random_seeds=1
 ```
 ## Acknowledgement
-We develop our project mainly on the [OpenLTH](https://github.com/facebookresearch/open_lth), which is easy to use and extend, as well as highly flexible. Thanks for the great work!
+We develop our project mainly on the [OpenLTH](https://github.com/facebookresearch/open_lth), which is easy to use and extend. Thanks for the great work!
 ## Citation
 If you find this useful for your research, please cite the following paper.
 ```
