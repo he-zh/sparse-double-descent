@@ -104,11 +104,13 @@ We develop our project mainly on the [OpenLTH](https://github.com/facebookresear
 ## Citation
 If you find this useful for your research, please cite the following paper.
 ```
-@article{he2022sparse,
+@inproceedings{he2022sparse,
   title={Sparse Double Descent: Where Network Pruning Aggravates Overfitting},
   author={He, Zheng and Xie, Zeke and Zhu, Quanzhi and Qin, Zengchang},
-  journal={arXiv preprint arXiv:2206.08684},
-  year={2022}
+  booktitle={International Conference on Machine Learning},
+  pages={8635--8659},
+  year={2022},
+  organization={PMLR}
 }
 ```
 
