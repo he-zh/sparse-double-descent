@@ -11,7 +11,7 @@ from foundations.step import Step
 
 
 
-class Model(abc.ABC, torch.nn.Module):
+class Model(torch.nn.Module, abc.ABC):
     """The base class used by all models in this codebase."""
 
     _prunable_layer_type: str = 'default'
